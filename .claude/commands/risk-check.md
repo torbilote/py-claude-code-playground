@@ -17,3 +17,7 @@ Engagement scope: $ARGUMENTS
 
 If an engagement ID was given above, scope the sweep to that engagement
 only. If it's empty, sweep every engagement in the portfolio.
+
+Include today's date in the prompt you give the subagent — it has no shell
+and no view of this conversation, so it only knows what you tell it, and it
+needs the date to judge what's stale or overdue.

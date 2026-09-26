@@ -1,20 +1,25 @@
 ---
 name: new-engagement
 description: Scaffold a brand-new client engagement end-to-end - collects the essentials, creates the engagement record, and optionally seeds an initial kickoff task and any known day-one risks. Use when the user says they're starting a new client engagement/project or asks to "set up" a new engagement.
+argument-hint: [client name]
 ---
 
-> **Skill, not a script.** This folder has no bundled script on purpose —
-> unlike `status-report`, the "work" here is a conversation (asking
-> clarifying questions), not a data transform, so it's pure instructions
-> that get loaded into the current conversation when `description` above
-> matches, or when you run `/new-engagement`. Same trigger mechanism either
-> way; the slash command just guarantees it fires.
+> **Skill, not a script — and also a slash command.** Every skill is
+> invocable as `/<name>` (here `/new-engagement`), and it can take arguments
+> exactly like a command: `argument-hint` above, `$ARGUMENTS` below. So
+> there's no separate `.claude/commands/new-engagement.md` — a command with
+> the same name would just collide with this skill. It also still fires on
+> its own when your request matches `description`. No bundled script on
+> purpose: unlike `status-report`, the work here is a conversation (asking
+> clarifying questions), not a data transform.
 
 # New engagement scaffolding
 
 Turns "we just kicked off a new engagement" into a fully recorded
 engagement with sensible starting content, using the real `delivery-copilot`
 CLI (not by hand-editing `data/engagements.json`).
+
+Client name passed on invocation (empty if none — then ask): $ARGUMENTS
 
 ## Steps
 

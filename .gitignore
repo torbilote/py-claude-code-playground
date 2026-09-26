@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 .venv/
 .claude/audit.log
+.claude/settings.local.json
+CLAUDE.local.md

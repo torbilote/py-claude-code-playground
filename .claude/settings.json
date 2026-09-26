@@ -3,11 +3,14 @@
     "type": "command",
     "command": "py .claude/statusline.py"
   },
+  "enabledMcpjsonServers": ["delivery-copilot"],
   "permissions": {
     "allow": [
       "Bash(py -m pytest:*)",
       "Bash(py -m delivery_copilot.cli:*)",
-      "Read(./data/**)"
+      "mcp__delivery-copilot__list_engagements",
+      "mcp__delivery-copilot__get_engagement",
+      "mcp__delivery-copilot__list_open_risks"
     ],
     "ask": [
       "Bash(git push:*)"
@@ -23,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py .claude/hooks/session_risk_glance.py"
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/session_risk_glance.py\""
           }
         ]
       }
@@ -34,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py .claude/hooks/block_secrets.py"
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_secrets.py\""
           }
         ]
       }
@@ -45,7 +48,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "py .claude/hooks/audit_log.py"
+            "command": "py \"$CLAUDE_PROJECT_DIR/.claude/hooks/audit_log.py\""
           }
         ]
       }

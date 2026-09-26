@@ -73,27 +73,31 @@ one *has access to*:
   bundled scripts) pulled *into* the current conversation when its
   `description` matches what you're asking for. No isolation, no tool
   restriction — it's know-how, not a separate agent.
-- A **slash command** (`.claude/commands/*.md`) is just a stored prompt
-  template, invoked by typing its name. Whatever you type after the command
-  name becomes `$ARGUMENTS`, substituted into the template. No auto-matching,
-  no isolation — the simplest of the three.
+- A **slash command** (`.claude/commands/*.md`) is a single-file prompt
+  template, invoked by typing `/<name>`. Whatever you type after the name
+  becomes `$ARGUMENTS`. Commands and skills have converged: every skill is
+  also invocable as `/<name>` and can take `$ARGUMENTS`, and commands show
+  up in the model's skill list too. The practical difference is shape — a
+  command is one file, a skill is a folder that can bundle scripts. That's
+  why `new-engagement` exists only as a skill here: a command with the same
+  name would collide with it.
 
 - **Subagent `risk-auditor`** — reviews engagement data for stale/high-severity
   open risks and overdue tasks; produces a prioritized findings list. Good for
-  "sweep all engagements before Monday's leadership sync."
+  "sweep all engagements before Monday's leadership sync." Read-only by
+  construction (only read-only MCP tools, no Bash) and runs on `haiku`.
 - **Subagent `secret-scanner`** — scans the working tree / staged diff for
   leaked credentials before a commit. Complements the `block_secrets` hook
   (the hook is a fast hard block; the subagent gives reasoned, broader review).
 - **Skill `status-report`** — turns one engagement's data into a polished,
   client-ready Markdown status report.
-- **Skill `new-engagement`** — scaffolds a new engagement record end-to-end
-  (asks clarifying questions, then calls the CLI to create it).
+- **Skill `new-engagement`** (`/new-engagement [client name]`) — scaffolds a
+  new engagement record end-to-end (asks clarifying questions, then calls the
+  CLI to create it).
 - **Command `/standup`** — quick informal summary of what's in flight across
   all engagements, for the consultant's own daily standup.
 - **Command `/risk-check [engagement-id]`** — invokes the `risk-auditor`
   subagent, optionally scoped to one engagement via `$ARGUMENTS`.
-- **Command `/new-engagement [client name]`** — invokes the `new-engagement`
-  skill, optionally pre-filling the client name via `$ARGUMENTS`.
 
 ## Hooks
 
@@ -102,10 +106,14 @@ specific events — they execute outside the model's control, so they're the
 right place for a hard guarantee (a block that can't be reasoned around),
 not just an instruction the model might skip. Each hook gets a JSON payload
 on stdin (event name, tool name, tool input, etc.) and answers back via exit
-code: `0` = allow/continue silently, non-zero on `PreToolUse` = block the
-tool call and feed the hook's stderr to the model as an explanation. The
-`matcher` field in the config below is a regex against the tool name (or
-omitted entirely for non-tool events like `SessionStart`).
+code: `0` = success/continue, `2` = blocking error (on `PreToolUse` the tool
+call is blocked and the hook's stderr is fed to the model as the reason),
+any other non-zero = non-blocking error (shown to you, the call proceeds).
+That last case matters: a hook that crashes does *not* block, so a security
+hook must fail with exit 2 on purpose. The `matcher` field is a regex against
+the tool name (omitted for non-tool events like `SessionStart`). Hook
+commands use `"$CLAUDE_PROJECT_DIR/..."` rather than relative paths, because
+the working directory can change mid-session (e.g. after a `cd`).
 
 Configured in `.claude/settings.json`:
 
@@ -125,14 +133,18 @@ Configured in `.claude/settings.json`:
 ## Permissions and status line
 
 - `.claude/settings.json` also carries a `permissions` block: a declarative
-  allow/ask/deny list Claude Code checks before *any* tool call, evaluated
-  before hooks even run and without needing to write code. Rules are pattern
-  strings like `Bash(py -m pytest:*)` (prefix match, `:*` = "and anything
-  after") or `Read(./data/**)` (glob on file tools). Here: common safe
-  commands are pre-allowed (no prompt), `git push` requires explicit
-  confirmation, and destructive commands (`rm -rf`, force-push) are denied
-  outright rather than merely discouraged — three different trust levels for
-  three different risk levels.
+  allow/ask/deny list for tool calls — pure pattern matching, no code (hooks
+  are the code-based counterpart). Rules look like `Bash(py -m pytest:*)`
+  (prefix match, `:*` = "and anything after"), `Read(./data/**)` (glob on
+  file tools), or `mcp__delivery-copilot__list_engagements` (MCP tools are
+  named `mcp__<server>__<tool>`). Here: tests, the CLI, and the three
+  *read-only* MCP tools are pre-allowed; the MCP tools that write
+  (`add_risk`, `log_time`) still prompt; `git push` always asks; `rm -rf` and
+  force-push are denied outright. Different trust levels for different risk
+  levels.
+- `enabledMcpjsonServers` pre-approves the `.mcp.json` server. Without it,
+  Claude Code asks whether to trust a project-defined MCP server the first
+  time — a deliberate safety gate, since `.mcp.json` launches a local process.
 - `statusLine` runs a command on every render and prints its stdout as the
   status bar text; the command receives session context (model name, cwd,
   cost so far) as JSON on stdin. Ours, `.claude/statusline.py`, uses the
