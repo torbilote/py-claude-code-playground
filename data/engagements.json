@@ -1,0 +1,89 @@
+[
+  {
+    "id": "eng-nord01",
+    "client_name": "Nordkap Retail",
+    "name": "Composable Commerce Migration",
+    "start_date": "2026-06-01",
+    "lead": "norbert.lipinski@valtech.com",
+    "end_date": null,
+    "status": "at-risk",
+    "risks": [
+      {
+        "id": "risk-a1b2c3",
+        "description": "Legacy PIM export job silently truncates product images over 5MB",
+        "severity": "high",
+        "owner": "norbert.lipinski@valtech.com",
+        "opened_date": "2026-09-10",
+        "status": "open",
+        "mitigation": null
+      },
+      {
+        "id": "risk-d4e5f6",
+        "description": "Client's security team has not yet approved the new CDN vendor",
+        "severity": "medium",
+        "owner": "a.kowalski@valtech.com",
+        "opened_date": "2026-09-15",
+        "status": "open",
+        "mitigation": null
+      },
+      {
+        "id": "risk-g7h8i9",
+        "description": "Staging environment credentials were rotated late, blocking QA for 2 days",
+        "severity": "low",
+        "owner": "norbert.lipinski@valtech.com",
+        "opened_date": "2026-08-20",
+        "status": "mitigated",
+        "mitigation": "Rotation schedule moved into the sprint calendar; QA now notified 48h in advance."
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task-t1a2b3",
+        "title": "Finalize PIM-to-headless-CMS field mapping",
+        "assignee": "a.kowalski@valtech.com",
+        "due_date": "2026-09-20",
+        "status": "in_progress"
+      },
+      {
+        "id": "task-t4c5d6",
+        "title": "Load test checkout flow at 3x Black Friday traffic",
+        "assignee": "norbert.lipinski@valtech.com",
+        "due_date": "2026-10-05",
+        "status": "todo"
+      },
+      {
+        "id": "task-t7e8f9",
+        "title": "Sign off on data residency questionnaire",
+        "assignee": "norbert.lipinski@valtech.com",
+        "due_date": "2026-09-01",
+        "status": "todo"
+      }
+    ],
+    "time_entries": [
+      { "date": "2026-09-22", "consultant": "norbert.lipinski@valtech.com", "hours": 6, "note": "PIM mapping workshop", "task_id": "task-t1a2b3" },
+      { "date": "2026-09-23", "consultant": "a.kowalski@valtech.com", "hours": 7.5, "note": "Headless CMS field mapping", "task_id": "task-t1a2b3" }
+    ]
+  },
+  {
+    "id": "eng-birch02",
+    "client_name": "Birchwood Insurance",
+    "name": "Claims Portal Modernization",
+    "start_date": "2026-03-15",
+    "lead": "norbert.lipinski@valtech.com",
+    "end_date": null,
+    "status": "active",
+    "risks": [],
+    "tasks": [
+      {
+        "id": "task-k1l2m3",
+        "title": "UAT sign-off for claims intake form",
+        "assignee": "norbert.lipinski@valtech.com",
+        "due_date": "2026-10-10",
+        "status": "todo"
+      }
+    ],
+    "time_entries": [
+      { "date": "2026-09-18", "consultant": "norbert.lipinski@valtech.com", "hours": 4, "note": "UAT prep", "task_id": "task-k1l2m3" }
+    ]
+  }
+]

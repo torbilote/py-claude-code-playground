@@ -1,0 +1,54 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "py .claude/statusline.py"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(py -m pytest:*)",
+      "Bash(py -m delivery_copilot.cli:*)",
+      "Read(./data/**)"
+    ],
+    "ask": [
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py .claude/hooks/session_risk_glance.py"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py .claude/hooks/block_secrets.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py .claude/hooks/audit_log.py"
+          }
+        ]
+      }
+    ]
+  }
+}

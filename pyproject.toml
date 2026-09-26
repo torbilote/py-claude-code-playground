@@ -1,0 +1,22 @@
+[project]
+name = "delivery-copilot"
+version = "0.1.0"
+description = "A small toolkit for managing Valtech client engagements — built as a Claude Code feature showcase."
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1",
+    "mcp>=1.2.0,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+delivery-copilot = "delivery_copilot.cli:cli"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

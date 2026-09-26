@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "delivery-copilot": {
+      "command": "py",
+      "args": ["mcp_server/server.py"],
+      "env": {}
+    }
+  }
+}
